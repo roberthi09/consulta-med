@@ -7,7 +7,7 @@ import { getAuth } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth
 const firebaseConfig = {
   apiKey: "AIzaSyAfsVE0JjbFKv8rrE-H2s2L9VkbqdK9k5k",
   authDomain: "wisdom-ark-receituario.firebaseapp.com",
-  databaseURL: "https://wisdom-ark-receituario-default-rtdb.firebaseio.com",
+  databaseURL: "https://console.firebase.google.com/u/0/project/wisdom-ark-receituario/database/wisdom-ark-receituario-default-rtdb/data/~2F",
   projectId: "wisdom-ark-receituario",
   storageBucket: "wisdom-ark-receituario.firebasestorage.app",
   messagingSenderId: "770953718410",
