@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Painel de Consultas</title>
+  <link rel="stylesheet" href="admin.css">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f2f4f7;
+    }
+
+    h2 {
+      text-align: center;
+      color: #1d72d9;
+      padding: 20px 0;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .filtros {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .filtros input, .filtros select, .filtros button {
+      padding: 10px;
+      font-size: 14px;
+    }
+
+    .consulta-item {
+      background-color: #f8f9fb;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .consulta-item strong {
+      color: #1d72d9;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Painel do Administrador</h1>
+    <button onclick="window.location.href='admin_login.html'">Sair ⎋</button>
+  </header>
+  <h2>Painel de Consultas</h2>
+  <div class="container">
+    <div class="filtros">
+      <input type="text" id="filtroMedico" placeholder="Filtrar por Médico">
+      <input type="date" id="dataInicio">
+      <input type="date" id="dataFim">
+      <button onclick="filtrarConsultas()">🔍 Filtrar</button>
+      <button onclick="exportarPDF()">📄 Exportar PDF</button>
+      <button onclick="exportarExcel()">📊 Exportar Excel</button>
+    </div>
+    <div id="consultaList"></div>
+  </div>
+
+  <script type="module" src="admin.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <!-- Botão flutuante para gráficos -->
+  <button id="btnGraficos" style="
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: #1976D2;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    cursor: pointer;
+  ">📊</button>
+
+  <!-- Container de gráficos -->
+  
+<div id="resumoEstatistico" style="
+  display: none;
+  position: fixed;
+  bottom: 100px;
+  right: 660px;
+  width: 300px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  z-index: 999;
+">
+  <h3 style="margin-top: 0;">📊 Resumo</h3>
+  <p><strong>👥 Total de Consultas:</strong> <span id="resumoTotal">0</span></p>
+  <p><strong>👨‍⚕️ Médicos Ativos:</strong> <span id="resumoMedicos">0</span></p>
+  <p><strong>🧪 Especialidades:</strong> <span id="resumoEspecialidades">0</span></p>
+  <p><strong>📅 Última Consulta:</strong> <span id="resumoUltima">--</span></p>
+
+  <div style="margin-top: 20px;">
+    <div id="cardsVariacao" style="display: flex; gap: 10px; flex-direction: column;">
+      <div id="cardSemana" style="padding: 10px; border-radius: 8px; background-color: #f0f4ff; border-left: 6px solid #1976D2;">
+        <strong>📈 Variação Semanal:</strong> <span id="valorSemana">Calculando...</span>
+      </div>
+      <div id="cardMes" style="padding: 10px; border-radius: 8px; background-color: #f0f4ff; border-left: 6px solid #1976D2;">
+        <strong>📆 Variação Mensal:</strong> <span id="valorMes">Calculando...</span>
+      </div>
+    </div>
+  </div>
+
+<div id="graficoContainer"
+ style="
+    display: none;
+    position: fixed;
+    bottom: 100px;
+    right: 30px;
+    width: 90%;
+    max-width: 600px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    z-index: 999;
+  ">
+    <h3 style="margin-top: 0;">📈 Gráficos de Consultas</h3>
+    <canvas id="graficoEspecialidades" height="200"></canvas>
+    <canvas id="graficoPorMedico" height="200" style="margin-top:30px;"></canvas>
+    <canvas id="graficoPorData" height="200" style="margin-top:30px;"></canvas>
+  
+    <div style="margin-top: 20px;">
+      <label>Filtrar por Especialidade:</label>
+      <select id="filtroEspecialidade" style="width: 100%; padding: 10px; border-radius: 8px; margin-bottom: 15px;"></select>
+
+      <label>Filtrar por Médico:</label>
+      <select id="filtroMedicoGrafico" style="width: 100%; padding: 10px; border-radius: 8px; margin-bottom: 15px;"></select>
+
+      <label>Filtrar por Intervalo de Datas:</label>
+      <input type="date" id="dataInicioFiltro" style="padding: 10px; margin-right: 10px;">
+      <input type="date" id="dataFimFiltro" style="padding: 10px;">
+      <button onclick="aplicarFiltrosGraficos()" style="margin-left: 10px; padding: 10px 20px;">Aplicar Filtros</button>
+    </div>
+
+    <div style="margin-top: 20px;">
+      <button onclick="exportarGraficoComoImagem('graficoEspecialidades')" style="margin-right:10px;">📸 Exportar Especialidades</button>
+      <button onclick="exportarGraficoComoImagem('graficoPorMedico')" style="margin-right:10px;">📸 Exportar Médicos</button>
+      <button onclick="exportarGraficoComoImagem('graficoPorData')">📸 Exportar Datas</button>
+    </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+    document.getElementById('btnGraficos').onclick = () => {
+      const box = document.getElementById('graficoContainer');
+      box.style.display = box.style.display === 'none' ? 'block' : 'none';
+    };
+  </script>
+
+  <div style="margin-top: 30px; text-align: center;">
+    <button onclick="abrirModal()" style="
+      background-color: #e53935;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 15px;
+      cursor: pointer;
+    ">⎋ Voltar à Tela Inicial</button>
+  </div>
+
+<!-- Modal de Confirmação -->
+<div id="confirmModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+  background-color:rgba(0,0,0,0.4); z-index:9999; justify-content:center; align-items:center; animation: fadeIn 0.3s;">
+  <div style="background:white; padding:30px; border-radius:12px; text-align:center; animation: scaleIn 0.3s;">
+    <p style="font-size:18px; margin-bottom:20px;">❓ Tem certeza que deseja sair?</p>
+    <button onclick="confirmarSaida()" style="padding:10px 20px; background:#1976D2; color:white; border:none; border-radius:6px; margin-right:10px;">✅ Confirmar</button>
+    <button onclick="fecharModal()" style="padding:10px 20px; background:#e53935; color:white; border:none; border-radius:6px;">❌ Cancelar</button>
+  </div>
+</div>
+
+<style>
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes scaleIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+</style>
+
+<script>
+function abrirModal() {
+  document.getElementById('confirmModal').style.display = 'flex';
+}
+function fecharModal() {
+  document.getElementById('confirmModal').style.display = 'none';
+}
+function confirmarSaida() {
+  window.location.href = '../index.html';
+}
+</script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</body>
+</html>
+
+
+
+</html>

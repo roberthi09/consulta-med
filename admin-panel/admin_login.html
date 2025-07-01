@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Área Privada do Administrador</title>
+  <link rel="stylesheet" href="admin.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #2c3e50, #3498db);
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .login-container {
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 30px;
+      border-radius: 12px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    input {
+      background-color: #fff;
+      color: #333;
+    }
+
+    button {
+      background-color: #2980b9;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #1f618d;
+    }
+
+    .error {
+      color: #ffdddd;
+      font-size: 14px;
+    }
+
+    .admin-badge {
+      font-size: 12px;
+      background-color: #e74c3c;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 20px;
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="admin-badge">Área Privada</div>
+    <h2>Login do Administrador</h2>
+    <input type="email" id="adminEmail" placeholder="Email do Administrador">
+    <input type="password" id="adminPassword" placeholder="Senha">
+    <button onclick="adminLogin()">Entrar</button>
+    <p id="loginError" class="error"></p>
+  </div>
+
+  <script type="module" src="admin.js"></script>
+
+  <div style="margin-top: 20px; text-align: center;">
+    <button onclick="abrirModal()" style="
+      background-color: #e53935;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+    ">⎋ Voltar à Tela Inicial</button>
+  </div>
+
+<!-- Modal de Confirmação -->
+<div id="confirmModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+  background-color:rgba(0,0,0,0.4); z-index:9999; justify-content:center; align-items:center; animation: fadeIn 0.3s;">
+  <div style="background:white; padding:30px; border-radius:12px; text-align:center; animation: scaleIn 0.3s;">
+    <p style="font-size:18px; margin-bottom:20px;">❓ Tem certeza que deseja sair?</p>
+    <button onclick="confirmarSaida()" style="padding:10px 20px; background:#1976D2; color:white; border:none; border-radius:6px; margin-right:10px;">✅ Confirmar</button>
+    <button onclick="fecharModal()" style="padding:10px 20px; background:#e53935; color:white; border:none; border-radius:6px;">❌ Cancelar</button>
+  </div>
+</div>
+
+<style>
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes scaleIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+</style>
+
+<script>
+function abrirModal() {
+  document.getElementById('confirmModal').style.display = 'flex';
+}
+function fecharModal() {
+  document.getElementById('confirmModal').style.display = 'none';
+}
+function confirmarSaida() {
+  window.location.href = '../index.html';
+}
+</script>
+
+<!-- Overlay de carregamento -->
+<div id="loadingOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+  background: rgba(0,0,0,0.4); z-index: 9999; justify-content: center; align-items: center; font-size: 24px; color: white;">
+  <div style="background: #1976D2; padding: 20px 40px; border-radius: 12px; animation: scaleIn 0.3s;">
+    🔄 Processando login...
+  </div>
+</div>
+
+</body>
+</html>
+

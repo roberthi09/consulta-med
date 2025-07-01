@@ -1,0 +1,126 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Painel de Consultas</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .painel-container {
+      max-width: 90%;
+      margin: 40px auto;
+      padding: 20px;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .painel-container h1 {
+      text-align: center;
+      color: #1976D2;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #4FC3F7;
+      color: white;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    .voltar {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .voltar a {
+      color: #1976D2;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+  <script type="module" src="../firebase.js"></script>
+</head>
+<body>
+  <div class="painel-container">
+    <h1>Painel de Consultas</h1>
+    <table id="tabelaConsultas">
+      <thead>
+        <tr>
+          <th>Paciente</th>
+          <th>CPF</th>
+          <th>SUS</th>
+          <th>Nascimento / Idade</th>
+          <th>Endereço</th>
+          <th>Especialidade</th>
+          <th>Motivo</th>
+          <th>Exames</th>
+          <th>Medicamentos</th>
+          <th>Alergias</th>
+          <th>Comorbidades</th>
+          <th>Data/Hora</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <div class="voltar">
+      <a href="dashboard.html">← Voltar para o Dashboard</a>
+    </div>
+  </div>
+
+  <script>
+    function carregarConsultas() {
+      const tbody = document.querySelector("#tabelaConsultas tbody");
+      tbody.innerHTML = "";
+
+      const chaves = Object.keys(localStorage).filter(k => k.startsWith("consulta_"));
+      if (chaves.length === 0) {
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+        td.colSpan = 12;
+        td.style.textAlign = "center";
+        td.innerText = "Nenhuma consulta registrada.";
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+        return;
+      }
+
+      chaves.sort().reverse().forEach(key => {
+        const consulta = JSON.parse(localStorage.getItem(key));
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${consulta.nomePaciente || ""}</td>
+          <td>${consulta.cpf || ""}</td>
+          <td>${consulta.sus || ""}</td>
+          <td>${consulta.dataNascimento || ""} / ${consulta.idade || ""}</td>
+          <td>${consulta.endereco || ""}</td>
+          <td>${consulta.especialidade || ""}</td>
+          <td>${consulta.motivo || ""}</td>
+          <td>${consulta.exames || ""}</td>
+          <td>${consulta.medicamentos || ""}</td>
+          <td>${consulta.alergias || ""}</td>
+          <td>${consulta.comorbidades || ""}</td>
+          <td>${consulta.dataHora || ""}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    window.onload = carregarConsultas;
+  </script>
+</body>
+</html>

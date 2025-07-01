@@ -1,0 +1,121 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cadastro</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .cadastro-container {
+      max-width: 400px;
+      margin: 60px auto;
+      padding: 30px;
+      background-color: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .cadastro-container h1 {
+      color: #1976D2;
+      margin-bottom: 20px;
+    }
+
+    .cadastro-container label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+      color: #1976D2;
+    }
+
+    .cadastro-container input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    .cadastro-container button {
+      background-color: #81C784;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin-top: 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .cadastro-container button:hover {
+      background-color: #66BB6A;
+    }
+
+    .preview {
+      margin-top: 10px;
+      height: 80px;
+      width: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+  </style>
+  <script type="module" src="../firebase.js"></script>
+</head>
+<body>
+  <div class="cadastro-container">
+    <h1>Cadastro</h1>
+    <label for="nome">Nome:</label>
+    <input type="text" id="nome" />
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" />
+
+    <label for="senha">Senha:</label>
+    <input type="password" id="senha" />
+
+    <label for="especialidade">Especialidade:</label>
+    <input type="text" id="especialidade" />
+
+    <label for="foto">Foto:</label>
+    <input type="file" id="foto" accept="image/*" onchange="previewFoto(event)" />
+    <img id="preview" class="preview" src="https://via.placeholder.com/80" alt="Prévia da Foto" />
+
+    <button onclick="cadastrar()">Cadastrar</button>
+  </div>
+
+  <script>
+    function previewFoto(event) {
+      const reader = new FileReader();
+      reader.onload = function () {
+        document.getElementById("preview").src = reader.result;
+      };
+      reader.readAsDataURL(event.target.files[0]);
+    }
+
+    function cadastrar() {
+      const nome = document.getElementById("nome").value;
+      const email = document.getElementById("email").value;
+      const senha = document.getElementById("senha").value;
+      const especialidade = document.getElementById("especialidade").value;
+      const foto = document.getElementById("foto").files[0];
+
+      if (!nome || !email || !senha || !especialidade || !foto) {
+        alert("Preencha todos os campos.");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function () {
+        localStorage.setItem("medico_nome", nome);
+        localStorage.setItem("medico_email", email);
+        localStorage.setItem("medico_senha", senha);
+        localStorage.setItem("medico_especialidade", especialidade);
+        localStorage.setItem("medico_foto", reader.result);
+        console.log("Cadastro realizado com:", nome, email, senha);
+        alert("Cadastro realizado!");
+        window.location.href = "login.html";
+      };
+      reader.readAsDataURL(foto);
+    }
+  </script>
+</body>
+</html>

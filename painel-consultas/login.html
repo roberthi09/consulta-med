@@ -1,0 +1,156 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .login-container {
+      max-width: 400px;
+      margin: 100px auto;
+      padding: 30px;
+      background-color: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .login-container h1 {
+      color: #1976D2;
+      margin-bottom: 30px;
+    }
+
+    .login-container label {
+      display: block;
+      margin: 15px 0 5px;
+      font-weight: bold;
+      color: #1976D2;
+    }
+
+    .login-container input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    .login-container button {
+      background-color: #81C784;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin-top: 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .login-container button:hover {
+      background-color: #66BB6A;
+    }
+
+    .login-container p {
+      margin-top: 20px;
+      color: #555;
+    }
+
+    .login-container a {
+      color: #1976D2;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+  <script type="module" src="../firebase.js"></script>
+</head>
+<body>
+  <div class="login-container">
+    <h1>Login</h1>
+    <label for="email">Email:</label>
+    <input type="email" id="email" />
+
+    <label for="senha">Senha:</label>
+    <input type="password" id="senha" />
+
+    <button onclick="login()">Entrar</button>
+    <p>Se não possui conta, <a href="cadastro.html">cadastre-se</a>.</p>
+  </div>
+
+  <script>
+    function login() {
+      const email = document.getElementById("email").value;
+      const senha = document.getElementById("senha").value;
+      const emailSalvo = localStorage.getItem("medico_email");
+      const senhaSalva = localStorage.getItem("medico_senha");
+      const nome = localStorage.getItem("medico_nome");
+
+      console.log("Digitado:", email, senha);
+      console.log("Salvo:", emailSalvo, senhaSalva);
+
+      if (email === emailSalvo && senha === senhaSalva) {
+        alert("Login bem-sucedido! Bem-vindo(a), " + nome);
+        window.location.href = "dashboard.html";
+      } else {
+        alert("Email ou senha incorretos.");
+      }
+    }
+  </script>
+
+  <div style="margin-top: 20px; text-align: center;">
+    <button onclick="abrirModal()" style="
+      background-color: #e53935;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+    ">⎋ Voltar à Tela Inicial</button>
+  </div>
+
+<!-- Modal de Confirmação -->
+<div id="confirmModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+  background-color:rgba(0,0,0,0.4); z-index:9999; justify-content:center; align-items:center; animation: fadeIn 0.3s;">
+  <div style="background:white; padding:30px; border-radius:12px; text-align:center; animation: scaleIn 0.3s;">
+    <p style="font-size:18px; margin-bottom:20px;">❓ Tem certeza que deseja sair?</p>
+    <button onclick="confirmarSaida()" style="padding:10px 20px; background:#1976D2; color:white; border:none; border-radius:6px; margin-right:10px;">✅ Confirmar</button>
+    <button onclick="fecharModal()" style="padding:10px 20px; background:#e53935; color:white; border:none; border-radius:6px;">❌ Cancelar</button>
+  </div>
+</div>
+
+<style>
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes scaleIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+</style>
+
+<script>
+function abrirModal() {
+  document.getElementById('confirmModal').style.display = 'flex';
+}
+function fecharModal() {
+  document.getElementById('confirmModal').style.display = 'none';
+}
+function confirmarSaida() {
+  window.location.href = '../index.html';
+}
+</script>
+
+<!-- Overlay de carregamento -->
+<div id="loadingOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+  background: rgba(0,0,0,0.4); z-index: 9999; justify-content: center; align-items: center; font-size: 24px; color: white;">
+  <div style="background: #1976D2; padding: 20px 40px; border-radius: 12px; animation: scaleIn 0.3s;">
+    🔄 Processando login...
+  </div>
+</div>
+
+  <script type="module" src="login_medico.js"></script>
+</body>
+</html>
+
+

@@ -1,0 +1,136 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Nova Consulta</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .registro-container {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .registro-container h1 {
+            text-align: center;
+            color: #1976D2;
+            margin-bottom: 30px;
+        }
+
+        .registro-container label {
+            display: block;
+            margin-top: 15px;
+            color: #1976D2;
+            font-weight: bold;
+        }
+
+        .registro-container input, .registro-container textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        .registro-container button {
+            background-color: #81C784;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 20px;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .registro-container button:hover {
+            background-color: #66BB6A;
+        }
+    </style>
+  <script type="module" src="../firebase.js"></script>
+</head>
+<body>
+    <div class="registro-container">
+        <h1>Nova Consulta</h1>
+
+        <label for="nomePaciente">Nome do Paciente:</label>
+        <input type="text" id="nomePaciente" placeholder="Digite o nome completo">
+
+        <label for="cpf">CPF:</label>
+        <input type="text" id="cpf" placeholder="Digite o CPF">
+
+        <label for="sus">Nº do SUS:</label>
+        <input type="text" id="sus" placeholder="Digite o número do cartão SUS">
+
+        <label for="dataNascimento">Data de Nascimento:</label>
+        <input type="date" id="dataNascimento" onchange="calcularIdade()">
+
+        <label for="idade">Idade:</label>
+        <input type="text" id="idade" readonly>
+
+        <label for="endereco">Endereço:</label>
+        <input type="text" id="endereco" placeholder="Digite o endereço do paciente">
+
+        <label for="especialidadeAtendimento">Especialidade do Atendimento:</label>
+        <input type="text" id="especialidadeAtendimento" placeholder="Ex: Cardiologia, Clínica Geral">
+
+        <label for="motivo">Motivo do Atendimento:</label>
+        <textarea id="motivo" rows="2" placeholder="Descreva o motivo da consulta"></textarea>
+
+        <label for="exames">Exames Solicitados:</label>
+        <textarea id="exames" rows="2" placeholder="Exames indicados"></textarea>
+
+        <label for="medicamentos">Medicamentos:</label>
+        <textarea id="medicamentos" rows="2" placeholder="Medicamentos prescritos"></textarea>
+
+        <label for="alergias">Medicamentos Alérgicos:</label>
+        <textarea id="alergias" rows="2" placeholder="Se houver, liste aqui"></textarea>
+
+        <label for="comorbidades">Comorbidades:</label>
+        <textarea id="comorbidades" rows="2" placeholder="Hipertensão, diabetes, etc."></textarea>
+
+        <button onclick="salvarConsulta()">Salvar Consulta</button>
+    </div>
+
+    <script>
+        function calcularIdade() {
+            const dataInput = document.getElementById("dataNascimento").value;
+            const hoje = new Date();
+            const nascimento = new Date(dataInput);
+            let idade = hoje.getFullYear() - nascimento.getFullYear();
+            const m = hoje.getMonth() - nascimento.getMonth();
+            if (m < 0 || (m === 0 && hoje.getDate() < nascimento.getDate())) {
+                idade--;
+            }
+            document.getElementById("idade").value = !isNaN(idade) ? idade + " anos" : "";
+        }
+
+        function salvarConsulta() {
+            const consulta = {
+                nomePaciente: document.getElementById("nomePaciente").value,
+                cpf: document.getElementById("cpf").value,
+                sus: document.getElementById("sus").value,
+                dataNascimento: document.getElementById("dataNascimento").value,
+                idade: document.getElementById("idade").value,
+                endereco: document.getElementById("endereco").value,
+                especialidade: document.getElementById("especialidadeAtendimento").value,
+                motivo: document.getElementById("motivo").value,
+                exames: document.getElementById("exames").value,
+                medicamentos: document.getElementById("medicamentos").value,
+                alergias: document.getElementById("alergias").value,
+                comorbidades: document.getElementById("comorbidades").value,
+                dataHora: new Date().toLocaleString()
+            };
+
+            localStorage.setItem("consulta_" + Date.now(), JSON.stringify(consulta));
+            alert("Consulta registrada com sucesso!");
+            window.location.href = "dashboard.html";
+        }
+    </script>
+</body>
+</html>
